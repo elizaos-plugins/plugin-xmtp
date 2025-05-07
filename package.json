@@ -1,11 +1,13 @@
 {
     "name": "@elizaos-plugins/client-xmtp",
-    "version": "0.25.6-alpha.1",
+    "version": "0.25.7-alpha.1",
     "main": "dist/index.js",
     "type": "module",
     "types": "dist/index.d.ts",
     "dependencies": {
-        "@xmtp/node-sdk": "0.0.40",
+        "@elizaos/core": "0.1.9",
+        "@xmtp/node-sdk": "2.0.3",
+        "sharp": "0.34.1",
         "tsx": "^4.19.2",
         "uint8arrays": "^5.1.0",
         "viem": "^2.22.17"
@@ -31,11 +33,29 @@
                 "description": "the private key of the wallet",
                 "optional": false
             },
-            "ENCRYPTION_KEY": {
+            "XMTP_SIGNER_TYPE": {
                 "type": "string",
-                "minLength": 1,
-                "description": "a second random 32 bytes encryption key for local db encryption",
+                "enum": [
+                    "SCW",
+                    "EOA"
+                ],
+                "description": "the type of the xmtp signer to use",
                 "optional": false
+            },
+            "XMTP_SCW_CHAIN_ID": {
+                "type": "string",
+                "description": "the chain id of the scw wallet",
+                "optional": true
+            },
+            "XMTP_ENV": {
+                "type": "string",
+                "enum": [
+                    "dev",
+                    "local",
+                    "production"
+                ],
+                "description": "the xmtp environment to use",
+                "optional": true
             }
         }
     }

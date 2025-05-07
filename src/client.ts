@@ -4,7 +4,7 @@ import {
   type XmtpEnv,
   type Conversation,
 } from "@xmtp/node-sdk";
-import { createSigner, getEncryptionKeyFromHex } from "./helper.ts";
+import { createEOASigner, createSCWSigner, SignerType } from "./helper.ts";
 
 import {
   composeContext,
@@ -18,6 +18,7 @@ import {
   Client,
   IAgentRuntime,
 } from "@elizaos/core";
+import { Hex } from "viem";
 
 let client: XmtpClient = null;
 let elizaRuntime: IAgentRuntime = null;
@@ -57,41 +58,66 @@ export const XmtpClientInterface: Client = {
     if (!client) {
       elizaRuntime = runtime;
 
-      const signer = createSigner(process.env.WALLET_KEY as `0x${string}`);
-      const encryptionKey = getEncryptionKeyFromHex(
-        process.env.ENCRYPTION_KEY as string
-      );
-      const env: XmtpEnv = "production";
+      const walletKey = process.env.WALLET_KEY as Hex;
+      const signerType = process.env.XMTP_SIGNER_TYPE as SignerType;
+      const chainId = process.env.XMTP_SCW_CHAIN_ID;
+      const env = process.env.XMTP_ENV as XmtpEnv || "production";
+
+      if (!walletKey) {
+        elizaLogger.error(
+          "WALLET_KEY environment variable is not set. Please set it to your wallet private key."
+        );
+        return;
+      }
+
+      if (signerType !== "EOA" && signerType !== "SCW") {
+        elizaLogger.error(
+          "SIGNER_TYPE environment variable is set to an invalid value. Please set it to 'EOA' or 'SCW'."
+        );
+        return;
+      }
+
+      if (signerType === "SCW" && !chainId) {
+        elizaLogger.error(
+          "CHAIN_ID environment variable is not set. Please set it to your chain ID."
+        );
+        return;
+      }
+
+      const signer = signerType === 'SCW' 
+        ? createSCWSigner(walletKey, BigInt(chainId)) 
+        : createEOASigner(walletKey);
 
       elizaLogger.success(`Creating client on the '${env}' network...`);
-      client = await XmtpClient.create(signer, encryptionKey, {
-        env,
+      client = await XmtpClient.create(signer, {
+        env
       });
 
       elizaLogger.success("Syncing conversations...");
       await client.conversations.sync();
 
       elizaLogger.success(
-        `Agent initialized on ${client.accountAddress}\nSend a message on http://xmtp.chat/dm/${client.accountAddress}?env=${env}`
+        `Agent initialized on ${client.accountIdentifier.identifier}\nSend a message on http://xmtp.chat/dm/${client.accountIdentifier.identifier}?env=${env}`
       );
 
       elizaLogger.success("Waiting for messages...");
-      const stream = client.conversations.streamAllMessages();
-
-      elizaLogger.success("✅ XMTP client started");
-
-      for await (const message of await stream) {
+      client.conversations.streamAllMessages(async (err, message) => {
+        if (err) {
+          elizaLogger.error("Error streaming messages", err);
+          return;
+        }
+        
         if (
           message?.senderInboxId.toLowerCase() ===
             client.inboxId.toLowerCase() ||
           message?.contentType?.typeId !== "text"
         ) {
-          continue;
+          return;
         }
 
         // Ignore own messages
         if (message.senderInboxId === client.inboxId) {
-          continue;
+          return
         }
 
         elizaLogger.success(
@@ -100,13 +126,13 @@ export const XmtpClientInterface: Client = {
           }`
         );
 
-        const conversation = client.conversations.getConversationById(
+        const conversation = await client.conversations.getConversationById(
           message.conversationId
         );
 
         if (!conversation) {
           console.log("Unable to find conversation, skipping");
-          continue;
+          return;
         }
 
         elizaLogger.success(`Sending "gm" response...`);
@@ -114,7 +140,9 @@ export const XmtpClientInterface: Client = {
         await processMessage(message, conversation);
 
         elizaLogger.success("Waiting for messages...");
-      }
+      });
+
+      elizaLogger.success("✅ XMTP client started");
 
       return client;
     }
@@ -125,11 +153,11 @@ export const XmtpClientInterface: Client = {
 };
 
 const processMessage = async (
-  message: DecodedMessage,
+  message: DecodedMessage<any>,
   conversation: Conversation
 ) => {
   try {
-    const text = message?.content?.text ?? "";
+    const text = message?.content ?? "";
     const messageId = stringToUuid(message.id as string);
     const userId = stringToUuid(message.senderInboxId as string);
     const roomId = stringToUuid(message.conversationId as string);
