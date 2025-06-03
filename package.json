@@ -1,11 +1,11 @@
 {
-    "name": "elizaos-plugin-xmtp",
-    "version": "1.0.0-beta.32",
+    "name": "@elizaos/plugin-xmtp",
+    "version": "1.0.0",
     "main": "dist/index.js",
     "type": "module",
     "types": "dist/index.d.ts",
     "dependencies": {
-        "@elizaos/core": "1.0.0-beta.32",
+        "@elizaos/core": "^1.0.4",
         "@xmtp/node-sdk": "2.0.3",
         "sharp": "0.34.1",
         "tsx": "^4.19.2",
@@ -23,5 +23,40 @@
     },
     "publishConfig": {
         "access": "public"
+    },
+    "agentConfig": {
+        "pluginType": "elizaos:plugin:1.0.0",
+        "pluginParameters": {
+            "WALLET_KEY": {
+                "type": "string",
+                "minLength": 1,
+                "description": "the private key of the wallet",
+                "optional": false
+            },
+            "XMTP_SIGNER_TYPE": {
+                "type": "string",
+                "enum": [
+                    "SCW",
+                    "EOA"
+                ],
+                "description": "the type of the xmtp signer to use",
+                "optional": false
+            },
+            "XMTP_SCW_CHAIN_ID": {
+                "type": "string",
+                "description": "the chain id of the scw wallet",
+                "optional": true
+            },
+            "XMTP_ENV": {
+                "type": "string",
+                "enum": [
+                    "dev",
+                    "local",
+                    "production"
+                ],
+                "description": "the xmtp environment to use",
+                "optional": true
+            }
+        }
     }
 }
