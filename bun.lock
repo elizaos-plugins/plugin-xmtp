@@ -4,7 +4,7 @@
     "": {
       "name": "@elizaos/plugin-xmtp",
       "dependencies": {
-        "@elizaos/core": "1.0.4",
+        "@elizaos/core": "^1.0.4",
         "@xmtp/node-sdk": "2.0.3",
         "sharp": "0.34.1",
         "tsx": "^4.19.2",
