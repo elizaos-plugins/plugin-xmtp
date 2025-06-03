@@ -1,4 +1,4 @@
-# XMTP Client package
+# XMTP Plugin package
 
 Eliza's client packages enable integration with various platforms and services. Each client provides a standardized interface for sending and receiving messages, handling media, and interacting with platform-specific features.
 
@@ -35,31 +35,48 @@ graph TD
 
 ## Available Client
 
-- XMTP (@elizaos/client-xmtp) - XMTP agent integration
+- XMTP (@elizaos/plugin-xmtp) - XMTP agent integration
 
 ## Installation
 
 ```bash
 # XMTP
 
-pnpm add @elizaos/client-xmtp
+pnpm add @elizaos/plugin-xmtp
 ```
 
 ## XMTP Client
 
 The XMTP client enables secure, decentralized, and encrypted messaging.
 
-### Basic Setup
+### Manual Setup
 
 ```tsx
-import { XmtpClientInterface } from "@elizaos/client-xmtp";
+import { xmtpPlugin } from "@elizaos/plugin-xmtp";
+import { character } from "./character";
 
-// Initialize the XMTP client
-const client = await XmtpClientInterface.start(runtime);
+export const projectAgent: ProjectAgent = {
+  character,
+  init: async (runtime: IAgentRuntime) => await initCharacter({ runtime }),
+  plugins: [xmtpPlugin],
+};
+```
 
-// Configuration in .env
+### Auto Setup
+
+```
+# Run this command in your project directory
+elizaos add plugins @elizaos/plugin-xmtp
+```
+
+
+Configuration in .env
+
+```env
 WALLET_KEY= // the private key of the wallet
-ENCRYPTION_KEY= // a second random 32 bytes encryption key for local db encryption
+XMTP_SIGNER_TYPE= // the type of signer to use (SCW or EOA)
+XMTP_SCW_CHAIN_ID= // (optional) the chain id for smart contract wallet
+XMTP_ENV= // (optional) XMTP environment (dev, local, production)
 ```
 
 For more information about XMTP visit it's [agent examples repo](https://github.com/ephemeraHQ/xmtp-agent-examples)
