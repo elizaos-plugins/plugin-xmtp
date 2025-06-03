@@ -130,6 +130,7 @@ export class XmtpService extends Service {
         serverId: message.conversationId,
         source: "xmtp",
         type: ChannelType.DM,
+        worldId: roomId, // For DM channels, using the same ID as roomId
       });
 
       const content: Content = {
