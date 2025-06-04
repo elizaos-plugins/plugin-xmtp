@@ -52,7 +52,7 @@ The XMTP client enables secure, decentralized, and encrypted messaging.
 ### Manual Setup
 
 ```tsx
-import { xmtpPlugin } from "@elizaos/plugin-xmtp";
+import xmtpPlugin from "@elizaos/plugin-xmtp";
 import { character } from "./character";
 
 export const projectAgent: ProjectAgent = {
