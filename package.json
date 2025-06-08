@@ -1,83 +1,52 @@
 {
-    "name": "@elizaos/plugin-xmtp",
-    "version": "1.0.2",
-    "main": "dist/index.js",
-    "type": "module",
-    "types": "dist/index.d.ts",
-    "exports": {
-        "./package.json": "./package.json",
-        ".": {
-          "import": {
-            "@elizaos/source": "./src/index.ts",
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-          }
-        }
-    },
-    "dependencies": {
-        "@elizaos/core": "^1.0.4",
-        "@xmtp/node-sdk": "2.0.3",
-        "sharp": "0.34.1",
-        "tsup": "8.3.5",
-        "uint8arrays": "^5.1.0",
-        "viem": "^2.22.17"
-    },
-    "devDependencies": {
-        "prettier": "3.5.3",
-        "ts-node": "10.9.2",
-        "tslib": "2.8.1",
-        "typescript": "5.8.2"
-    },
-    "files": [
-        "dist"
-      ],
-    "scripts": {
-        "build": "tsup",
-        "dev": "tsup --format esm --dts --watch",
-        "lint": "prettier --write ./src",
-        "format": "prettier --write ./src",
-        "format:check": "prettier --check ./src"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "agentConfig": {
-        "pluginType": "elizaos:plugin:1.0.0",
-        "pluginParameters": {
-            "WALLET_KEY": {
-                "type": "string",
-                "minLength": 1,
-                "description": "the private key of the wallet",
-                "optional": false
-            },
-            "XMTP_SIGNER_TYPE": {
-                "type": "string",
-                "enum": [
-                    "SCW",
-                    "EOA"
-                ],
-                "description": "the type of the xmtp signer to use",
-                "optional": false
-            },
-            "XMTP_SCW_CHAIN_ID": {
-                "type": "string",
-                "description": "the chain id of the scw wallet",
-                "optional": true
-            },
-            "XMTP_ENV": {
-                "type": "string",
-                "enum": [
-                    "dev",
-                    "local",
-                    "production"
-                ],
-                "description": "the xmtp environment to use",
-                "optional": true
-            }
-        }
-    },
-    "repository": {
+  "name": "@elizaos/plugin-xmtp",
+  "version": "1.0.3",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "@elizaos/source": "./src/index.ts",
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "dependencies": {
+    "@elizaos/core": "^1.0.4",
+    "@xmtp/node-sdk": "2.0.3",
+    "sharp": "0.34.1",
+    "tsup": "8.3.5",
+    "uint8arrays": "^5.1.0",
+    "viem": "^2.22.17"
+  },
+  "devDependencies": {
+    "prettier": "3.5.3",
+    "ts-node": "10.9.2",
+    "tslib": "2.8.1",
+    "typescript": "5.8.2"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --format esm --dts --watch",
+    "lint": "prettier --write ./src",
+    "format": "prettier --write ./src",
+    "format:check": "prettier --check ./src"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "agentConfig": {
+    "pluginType": "elizaos:plugin:1.0.0",
+    "pluginParameters": {}
+  },
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/elizaos-plugins/plugin-xmtp.git"
-    }
+  }
 }
