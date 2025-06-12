@@ -14,7 +14,6 @@ graph TD
     CI --> DC["Direct Client"]
     CI --> DSC["Discord Client"]
     CI --> TC["Telegram Client"]
-    CI --> TWC["Twitter Client"]
     CI --> AC["Auto Client"]
     CI --> XMTP["XMTP Client"]
 
